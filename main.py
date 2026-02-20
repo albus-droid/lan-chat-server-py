@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import socket
 
-def run(server_class=HTTPServer, handler_class=BaseHTTPRequestHandler):
-    server_address = ('0.0.0.0', 8000)
-    httpd = server_class(server_address, handler_class)
-    print("Server running on port 8000...")
-    httpd.serve_forever()
+HOST = "0.0.0.0"
+
+def socket_run():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((HOST, 8080))
+    s.listen()
+    while True:
+        conn, addr = s.accept()
+        print("Connected by", addr)
+        msg = conn.recv(1024)
+        print(msg)
 
 if __name__ == "__main__":
-    run()
+    socket_run()
+    
