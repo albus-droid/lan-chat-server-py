@@ -10,9 +10,13 @@ def socket_run():
     while True:
         conn, addr = s.accept()
         print("Connected by", addr)
-        msg = conn.recv(1024)
-        print(msg)
+        while True:
+            msg = conn.recv(1024)
+            if not msg:
+                break
+            print(addr, ":", msg.decode())
+        conn.close()
+        print("Disconnected by", addr)
 
 if __name__ == "__main__":
     socket_run()
-    
