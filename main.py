@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import socket
 import threading
+import sys
 
 HOST = "0.0.0.0"
 
@@ -11,7 +12,12 @@ def end_connection(conn, addr):
     print("Closing connection with", addr)
     server_respond(conn, "Closing Connection")
     conn.close()
-    
+
+def server_client_msg(conn):
+    line = sys.stdin.readline() 
+    if line.strip():
+       conn.sendall(("Server: "+ line).encode())
+
 def handle_client(conn, addr):
        print("Connected by", addr)
        while True:
@@ -20,7 +26,7 @@ def handle_client(conn, addr):
                end_connection(conn, addr)
                break
            print(addr, ":", msg)
-           server_respond(conn, "Message Received")
+           server_respond(conn, "Message Recieved by the server\n")
 
 def socket_run():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,7 +36,7 @@ def socket_run():
     while True:
         conn, addr = s.accept()
         threading.Thread(target=handle_client, args=(conn, addr)).start()
-        
+        threading.Thread(target=server_client_msg, args=(conn, )).start()
 
 if __name__ == "__main__":
      socket_run()
