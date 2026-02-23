@@ -9,16 +9,21 @@ def end_connection(conn, addr):
     
 def socket_run():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((HOST, 8080))
     s.listen()
+
     while True:
         conn, addr = s.accept()
         print("Connected by", addr)
+
         while True:
             msg = conn.recv(1024)
             if msg.decode().strip() == "/end":
                 end_connection(conn, addr)
                 break
+
             print(addr, ":", msg.decode())
 
 if __name__ == "__main__":
