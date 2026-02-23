@@ -2,14 +2,16 @@
 import socket
 import threading
 import sys
+import colors 
 
 HOST = "0.0.0.0"
+PORT = 8080
 
 def server_respond(conn, msg):
     conn.sendall(msg.encode())
     
 def end_connection(conn, addr):
-    print("Closing connection with", addr)
+    print(colors.color("Closing connection with", colors.RED), addr)
     server_respond(conn, "Closing Connection")
     conn.close()
 
@@ -19,7 +21,7 @@ def server_client_msg(conn):
        conn.sendall(("Server: "+ line).encode())
 
 def handle_client(conn, addr):
-       print("Connected by", addr)
+       print(colors.color("Connected by", colors.GREEN), addr)
        while True:
            msg = conn.recv(1024).decode().strip()
            if not msg or msg == "/end":
@@ -31,7 +33,7 @@ def handle_client(conn, addr):
 def socket_run():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((HOST, 8080))
+    s.bind((HOST, PORT))
     s.listen()
     while True:
         conn, addr = s.accept()
