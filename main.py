@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import socket
-import thread
+import threading
 
 HOST = "0.0.0.0"
 
