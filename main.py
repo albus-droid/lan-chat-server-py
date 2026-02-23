@@ -12,7 +12,7 @@ def handle_client(conn, addr):
        print("Connected by", addr)
        while True:
            msg = conn.recv(1024)
-           if msg.decode().strip() == "/end":
+           if not msg or msg.decode().strip() == "/end":
                end_connection(conn, addr)
                break
            print(addr, ":", msg.decode())
