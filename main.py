@@ -92,7 +92,7 @@ def stdin_thread() -> None:
         text = line.strip()
         if not text:
             continue
-        msg = f"Server: {text}\n"
+        msg = colors.color(f"Server: {text}\n", colors.YELLOW)
         with clients_lock:
             conns = list(clients)
         for c in conns:
