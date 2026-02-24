@@ -68,7 +68,8 @@ def handle_client(conn: socket.socket, addr: tuple) -> None:
             if msg == "/end":
                 send_safe(conn, "Closing Connection")
                 break
-            logging.info("%s: %s", addr, msg)
+            for c in list(clients):
+                send_safe(c, f"{addr}: {msg}")
             send_safe(conn, "Message received by the server\n")
     finally:
         with clients_lock:
