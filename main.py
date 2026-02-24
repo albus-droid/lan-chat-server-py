@@ -70,8 +70,8 @@ def handle_client(conn: socket.socket, addr: tuple) -> None:
                 break
             logging.info("%s: %s", addr, msg)
             for c in list(clients):
-                send_safe(c, f"{addr}: {msg}")
-            send_safe(conn, "Message received by the server\n")
+                send_safe(c, f"{addr}: {msg}\n")
+            send_safe(conn, colors.color("Message received by the server\n", colors.BLUE))
     finally:
         with clients_lock:
             if conn in clients:
