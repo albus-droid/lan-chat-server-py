@@ -13,6 +13,8 @@ from utils import (
     server_broadcast_loop,
     broadcast_message,
     send_to_conn,
+    store_history,
+    send_history
 )
 
 
@@ -64,6 +66,8 @@ class Server:
     def handle_client(self, conn: socket.socket, addr: Tuple[str, int]) -> None:
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
         send_history(self, conn)
+        conn.sendall(f"{colors.color('Welcome to the server!', colors.BLUE)}\n".encode())
+
         try:
             while not self.stop_event.is_set():
                 try:
@@ -80,7 +84,7 @@ class Server:
                 if msg == "/end":
                     send_to_conn(self, conn, "Closing connection\n")
                     break
-
+                print(f"{colors.color('Received from', colors.CYAN)} {addr}: {msg}")
                 logging.info(f"{addr}: {msg}")
                 broadcast_message(self, f"{addr}: {msg}\n")
                 store_history(self, f"{addr}: {msg}\n")

@@ -45,13 +45,12 @@ def server_broadcast_loop(server) -> None:
         text = line.strip()
         if not text:
             continue
-        broadcast_message(server, f"Server: {text}\n")
+        broadcast_message(server, f"{colors.color('Server: ', colors.YELLOW)} {text}\n")
 
 def store_history(server, msg: str) -> None:
     server.history.append(msg)
 
 def send_history(server, conn: socket.socket) -> None:
-    logging.info(f"Sending history to {conn.getpeername()}")
     if not server.history:
         return
     for msg in server.history:
