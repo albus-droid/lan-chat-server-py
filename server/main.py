@@ -1,0 +1,15 @@
+# main.py
+import signal
+from server import Server
+
+def main():
+    server = Server(host="0.0.0.0", port=8080)
+
+    # shutdown signal handlers
+    signal.signal(signal.SIGINT, lambda s, f: server.shutdown())
+    signal.signal(signal.SIGTERM, lambda s, f: server.shutdown())
+
+    server.start()
+
+if __name__ == "__main__":
+    main()

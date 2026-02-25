@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# Colors for terminal output
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
 
