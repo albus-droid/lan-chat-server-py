@@ -45,7 +45,7 @@ def server_broadcast_loop(server) -> None:
         text = line.strip()
         if not text:
             continue
-        broadcast_message(server, f"Server: {text}\n")
+        broadcast_message(server, f"{colors.color('Server: ', colors.YELLOW)} {text}\n")
 
 def store_history(server, msg: str) -> None:
     server.history.append(msg)
