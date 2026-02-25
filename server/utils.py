@@ -1,6 +1,7 @@
 import socket
 import sys
 from typing import Iterable
+import colors
 
 
 def socket_setup(server) -> socket.socket:
@@ -24,10 +25,12 @@ def send_to_conn(server, conn: socket.socket, msg: str) -> None:
             server.clients.discard(conn)
 
 
-def broadcast_message(server, msg: str) -> None:
+def broadcast_message(server, msg: str, sender=None) -> None:
     with server.clients_lock:
         for c in list(server.clients):
             try:
+                if c == sender:
+                    continue
                 c.sendall(msg.encode())
             except Exception:
                 try:
@@ -46,6 +49,7 @@ def server_broadcast_loop(server) -> None:
         if not text:
             continue
         broadcast_message(server, f"{colors.color('Server: ', colors.YELLOW)} {text}\n")
+        store_history(server, f"Server: {text}\n")
 
 def store_history(server, msg: str) -> None:
     server.history.append(msg)

@@ -84,11 +84,9 @@ class Server:
                 if msg == "/end":
                     send_to_conn(self, conn, "Closing connection\n")
                     break
-                print(f"{colors.color('Received from', colors.CYAN)} {addr}: {msg}")
                 logging.info(f"{addr}: {msg}")
-                broadcast_message(self, f"{addr}: {msg}\n")
+                broadcast_message(self, f"{addr}: {msg}\n", conn)
                 store_history(self, f"{addr}: {msg}\n")
-
         finally:
             with self.clients_lock:
                 self.clients.discard(conn)
