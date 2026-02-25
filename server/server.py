@@ -63,10 +63,10 @@ class Server:
 
     def handle_client(self, conn: socket.socket, addr: Tuple[str, int]) -> None:
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
+        send_history(self, conn)
         try:
             while not self.stop_event.is_set():
                 try:
-                    send_history(self, conn)
                     data = conn.recv(1024)
                 except socket.timeout:
                     continue

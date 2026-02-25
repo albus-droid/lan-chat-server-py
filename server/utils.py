@@ -51,5 +51,8 @@ def store_history(server, msg: str) -> None:
     server.history.append(msg)
 
 def send_history(server, conn: socket.socket) -> None:
+    logging.info(f"Sending history to {conn.getpeername()}")
+    if not server.history:
+        return
     for msg in server.history:
         send_to_conn(server, conn, msg)
