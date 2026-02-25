@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Set, Tuple
 import logging
 import colors
+from collections import deque
 
 from utils import (
     socket_setup,
@@ -25,6 +26,7 @@ class Server:
         self.clients: Set[socket.socket] = set()
         self.clients_lock = threading.Lock()
         self.stop_event = threading.Event()
+        self.history: deque[str] = deque(maxlen=10)
 
     def start(self) -> None:
         self.sock = socket_setup(self)
@@ -64,6 +66,7 @@ class Server:
         try:
             while not self.stop_event.is_set():
                 try:
+                    send_history(self, conn)
                     data = conn.recv(1024)
                 except socket.timeout:
                     continue
@@ -80,6 +83,7 @@ class Server:
 
                 logging.info(f"{addr}: {msg}")
                 broadcast_message(self, f"{addr}: {msg}\n")
+                store_history(self, f"{addr}: {msg}\n")
 
         finally:
             with self.clients_lock:

@@ -46,3 +46,10 @@ def server_broadcast_loop(server) -> None:
         if not text:
             continue
         broadcast_message(server, f"Server: {text}\n")
+
+def store_history(server, msg: str) -> None:
+    server.history.append(msg)
+
+def send_history(server, conn: socket.socket) -> None:
+    for msg in server.history:
+        send_to_conn(server, conn, msg)
