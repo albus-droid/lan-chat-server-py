@@ -66,7 +66,7 @@ class Server:
     def handle_client(self, conn: socket.socket, addr: Tuple[str, int]) -> None:
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
         send_history(self, conn)
-        conn.sendall("Welcome to the server!\n".encode())
+        conn.sendall(f"{colors.color('Welcome to the server!', colors.BLUE)}\n".encode())
 
         try:
             while not self.stop_event.is_set():
