@@ -13,6 +13,8 @@ from utils import (
     server_broadcast_loop,
     broadcast_message,
     send_to_conn,
+    store_history,
+    send_history
 )
 
 
@@ -63,7 +65,7 @@ class Server:
 
     def handle_client(self, conn: socket.socket, addr: Tuple[str, int]) -> None:
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
-        # send_history(self, conn)
+        send_history(self, conn)
         conn.sendall("Welcome to the server!\n".encode())
 
         try:
