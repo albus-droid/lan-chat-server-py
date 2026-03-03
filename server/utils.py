@@ -1,7 +1,7 @@
 import socket
 import sys
 from typing import Iterable
-import colors
+from . import colors
 
 
 def socket_setup(server) -> socket.socket:

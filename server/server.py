@@ -5,10 +5,10 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from typing import Set, Tuple
 import logging
-import colors
 from collections import deque
 
-from utils import (
+import server.colors
+from server.utils import (
     socket_setup,
     server_broadcast_loop,
     broadcast_message,
