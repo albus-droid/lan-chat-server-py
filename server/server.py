@@ -99,7 +99,7 @@ class Server:
                     send_to_conn(self, conn, "Closing connection\n")
                     break
                 logging.info(colors.color(f"{session.name}: {msg}", session.color))
-                broadcast_message(self, colors.color(f"{session.name}: {msg}\n", session.color), conn)
+                broadcast_message(self, colors.color(f"{session.name}: {msg}\n", session.color), session)
                 store_history(self, f"{session.name}: {msg}\n")
         finally:
             with self.clients_lock:
