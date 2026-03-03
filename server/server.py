@@ -7,7 +7,9 @@ from typing import Set, Tuple
 import logging
 from collections import deque
 
-import server.colors
+from server import colors
+from server.client import ClientSession
+
 from server.utils import (
     socket_setup,
     server_broadcast_loop,
@@ -48,6 +50,7 @@ class Server:
 
                 conn.settimeout(1.0)
                 session = ClientSession(conn, addr)
+                logging.info(f"Client info {session.conn}:{session.addr}")
                 with self.clients_lock:
                     self.clients.add(session)
 
@@ -65,8 +68,15 @@ class Server:
             pass
 
     def handle_client(self, session : ClientSession) -> None:
+
+        logging.info(f"session object: {session}")
+
         conn = session.conn
         addr = session.addr
+
+
+        logging.info(f"conn: {conn}")
+        logging.info(f"addr: {addr}")
 
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
         send_history(self, conn)
