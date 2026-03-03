@@ -21,3 +21,6 @@ Options:
 Notes
 
 - This is a simple demo; consider using `asyncio` or proper framing for production.
+
+Tests:
+- Run tests with `python -m unittest discover -s tests` from the root
