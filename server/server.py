@@ -69,14 +69,8 @@ class Server:
 
     def handle_client(self, session : ClientSession) -> None:
 
-        logging.info(f"session object: {session}")
-
         conn = session.conn
         addr = session.addr
-
-
-        logging.info(f"conn: {conn}")
-        logging.info(f"addr: {addr}")
 
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
         send_history(self, conn)
