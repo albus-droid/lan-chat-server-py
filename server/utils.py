@@ -1,7 +1,7 @@
 import socket
 import sys
 from typing import Iterable
-import colors
+from . import colors
 
 
 def socket_setup(server) -> socket.socket:
@@ -25,19 +25,19 @@ def send_to_conn(server, conn: socket.socket, msg: str) -> None:
             server.clients.discard(conn)
 
 
-def broadcast_message(server, msg: str, sender=None) -> None:
+def broadcast_message(server, msg: str, sender: ClientSession | None = None) -> None:
     with server.clients_lock:
-        for c in list(server.clients):
+        for s in list(server.clients):
+            if sender is not None and s is sender:
+                continue
             try:
-                if c == sender:
-                    continue
-                c.sendall(msg.encode())
+                s.conn.sendall(msg.encode())
             except Exception:
                 try:
-                    c.close()
+                    s.close()
                 except Exception:
                     pass
-                server.clients.discard(c)
+                server.clients.discard(s)
 
 
 def server_broadcast_loop(server) -> None:

@@ -2,7 +2,7 @@
 import signal
 import logging
 
-from server import Server
+from server.server import Server
 
 def main():
     server = Server(host="0.0.0.0", port=8080)

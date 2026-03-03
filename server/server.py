@@ -5,10 +5,12 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from typing import Set, Tuple
 import logging
-import colors
 from collections import deque
 
-from utils import (
+from server import colors
+from server.client import ClientSession
+
+from server.utils import (
     socket_setup,
     server_broadcast_loop,
     broadcast_message,
@@ -25,7 +27,7 @@ class Server:
         self.workers = workers
 
         self.sock: socket.socket | None = None
-        self.clients: Set[socket.socket] = set()
+        self.clients: Set[ClientSession] = set()
         self.clients_lock = threading.Lock()
         self.stop_event = threading.Event()
         self.history: deque[str] = deque(maxlen=10)
@@ -47,10 +49,12 @@ class Server:
                     break
 
                 conn.settimeout(1.0)
+                session = ClientSession(conn, addr)
+                logging.info(f"Client info {session.conn}:{session.addr}")
                 with self.clients_lock:
-                    self.clients.add(conn)
+                    self.clients.add(session)
 
-                executor.submit(self.handle_client, conn, addr)
+                executor.submit(self.handle_client, session)
 
         self.cleanup()
 
@@ -63,7 +67,11 @@ class Server:
         except Exception:
             pass
 
-    def handle_client(self, conn: socket.socket, addr: Tuple[str, int]) -> None:
+    def handle_client(self, session : ClientSession) -> None:
+
+        conn = session.conn
+        addr = session.addr
+
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
         send_history(self, conn)
         conn.sendall(f"{colors.color('Welcome to the server!', colors.BLUE)}\n".encode())
@@ -84,12 +92,12 @@ class Server:
                 if msg == "/end":
                     send_to_conn(self, conn, "Closing connection\n")
                     break
-                logging.info(f"{addr}: {msg}")
-                broadcast_message(self, f"{addr}: {msg}\n", conn)
-                store_history(self, f"{addr}: {msg}\n")
+                logging.info(colors.color(f"{session.name}: {msg}", session.color))
+                broadcast_message(self, colors.color(f"{session.name}: {msg}\n", session.color), session)
+                store_history(self, f"{session.name}: {msg}\n")
         finally:
             with self.clients_lock:
-                self.clients.discard(conn)
+                self.clients.discard(session)
             try:
                 conn.close()
             except Exception:
@@ -97,15 +105,8 @@ class Server:
             logging.info(f"{colors.color('Closing connection with', colors.RED)} {addr}")
 
     def cleanup(self) -> None:
-        try:
-            if self.sock:
-                self.sock.close()
-        except Exception:
-            pass
         with self.clients_lock:
-            for c in list(self.clients):
-                try:
-                    c.close()
-                except Exception:
-                    pass
+            sessions = list(self.clients)
             self.clients.clear()
+        for c in sessions:
+            c.close()
