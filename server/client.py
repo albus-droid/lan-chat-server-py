@@ -1,4 +1,4 @@
-from . import colors
+import server.colors
 
 class ClientSession:
     def __init__(self, conn, addr):
