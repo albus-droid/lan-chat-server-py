@@ -103,6 +103,6 @@ class Server:
     def cleanup(self) -> None:
         with self.clients_lock:
             sessions = list(self.clients)
-            self.sessions.clear()
+            self.clients.clear()
         for c in sessions:
             c.close()
