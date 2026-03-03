@@ -1,4 +1,6 @@
 # Colors for terminal output
+import random
+
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
 
@@ -12,3 +14,8 @@ GRAY   = "\033[90m"
 
 def color(text: str, code: str) -> str:
     return f"{code}{text}{RESET}"
+
+USER_COLORS = [GREEN, CYAN, RED, BLUE]
+
+def random_color():
+    return random.choice(USER_COLORS)
