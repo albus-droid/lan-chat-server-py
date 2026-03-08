@@ -2,7 +2,7 @@ import socket
 import sys
 from typing import Iterable
 from . import colors
-
+from server.client import ClientSession
 
 def socket_setup(server) -> socket.socket:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,16 +13,16 @@ def socket_setup(server) -> socket.socket:
     return s
 
 
-def send_to_conn(server, conn: socket.socket, msg: str) -> None:
+def send_to_conn(server, session: ClientSession, msg: str) -> None:
     try:
-        conn.sendall(msg.encode())
+        session.conn.sendall(msg.encode())
     except Exception:
         try:
-            conn.close()
+            session.close()
         except Exception:
             pass
         with server.clients_lock:
-            server.clients.discard(conn)
+            server.clients.discard(session)
 
 
 def broadcast_message(server, msg: str, sender: ClientSession | None = None) -> None:
