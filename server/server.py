@@ -1,9 +1,7 @@
 # server.py
 from __future__ import annotations
 import socket
-# import threading
 import asyncio
-# from concurrent.futures import ThreadPoolExecutor
 from typing import Set, Tuple
 import logging
 from collections import deque
@@ -24,12 +22,9 @@ class Server:
     def __init__(self, host: str = "0.0.0.0", port: int = 8080, workers: int = 8):
         self.host = host
         self.port = port
-        # self.workers = workers
 
         self.sock: socket.socket | None = None
         self.clients: Set[ClientSession] = set()
-        # self.clients_lock = threading.Lock()
-        # self.stop_event = threading.Event()
         self.history: deque[str] = deque(maxlen=10)
 
     async def start(self) -> None:
@@ -39,26 +34,18 @@ class Server:
 
         loop = asyncio.get_running_loop()
 
-        # threading.Thread(target=server_broadcast_loop, args=(self,), daemon=True).start()
         asyncio.create_task(server_broadcast_loop(self))
         
-        # with ThreadPoolExecutor(max_workers=self.workers) as executor:
-        # while not self.stop_event.is_set():
         while True:
             try:
                 conn, addr = await loop.sock_accept(self.sock)
-        #   except socket.timeout:
-        #       continue
             except Exception:
                 break
 
-            # conn.settimeout(1.0)
             session = ClientSession(conn, addr)
             logging.info(f"Client info {session.conn}:{session.addr}")
-            # with self.clients_lock:
             self.clients.add(session)
 
-            # executor.submit(self.handle_client, session)
             asyncio.create_task(self.handle_client(session, loop))
 
         self.cleanup()
@@ -66,7 +53,6 @@ class Server:
     def shutdown(self) -> None:
         logging.info("Shutting down server...")
         loop = asyncio.get_event_loop()
-        # self.stop_event.set()
         try:
             if self.sock:
                 self.sock.close()
@@ -87,12 +73,8 @@ class Server:
         await loop.sock_sendall(session.conn, f"{colors.color('Welcome to the server!', colors.BLUE)}\n".encode())
 
         try:
-            # while not self.stop_event.is_set():
             while True:
-                # try:
                 data = await loop.sock_recv(conn, 1024)
-                # except socket.timeout:
-                    # continue
                 if not data:
                     break
 
@@ -109,13 +91,11 @@ class Server:
                 store_history(self, f"{session.name}: {msg}\n")
         
         finally:
-            # with self.clients_lock:
             self.clients.discard(session)
             session.close()
             logging.info(f"{colors.color('Closing connection with', colors.RED)} {addr}")
 
     def cleanup(self) -> None:
-        # with self.clients_lock:
         sessions = list(self.clients)
         self.clients.clear()
         

@@ -11,15 +11,10 @@ def main():
     
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-
-    # shutdown signal handlers
-    # signal.signal(signal.SIGINT, lambda s, f: server.shutdown())
-    # signal.signal(signal.SIGTERM, lambda s, f: server.shutdown())
     
     loop.add_signal_handler(signal.SIGINT, server.shutdown)
     loop.add_signal_handler(signal.SIGTERM, server.shutdown)
 
-    # server.start()
     try:
         loop.run_until_complete(server.start())
     except RuntimeError:
