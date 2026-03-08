@@ -43,7 +43,7 @@ class Server:
                 break
 
             session = ClientSession(conn, addr)
-            logging.info(f"Client info {session.conn}:{session.addr}")
+            # logging.info(f"Client info {session.conn}:{session.addr}")
             self.clients.add(session)
 
             asyncio.create_task(self.handle_client(session, loop))

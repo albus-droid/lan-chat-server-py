@@ -74,4 +74,4 @@ async def send_history(server, session: ClientSession) -> None:
     if not server.history:
         return
     for msg in server.history:
-        send_to_conn(server, session, msg)
+        await send_to_conn(server, session, msg)
