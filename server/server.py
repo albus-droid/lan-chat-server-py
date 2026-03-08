@@ -73,7 +73,7 @@ class Server:
         addr = session.addr
 
         logging.info(f"{colors.color('Connected by', colors.GREEN)} {addr}")
-        send_history(self, conn)
+        send_history(self, session)
         conn.sendall(f"{colors.color('Welcome to the server!', colors.BLUE)}\n".encode())
 
         try:
