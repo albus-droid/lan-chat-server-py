@@ -27,17 +27,22 @@ def send_to_conn(server, session: ClientSession, msg: str) -> None:
 
 def broadcast_message(server, msg: str, sender: ClientSession | None = None) -> None:
     with server.clients_lock:
-        for s in list(server.clients):
-            if sender is not None and s is sender:
-                continue
-            try:
-                s.conn.sendall(msg.encode())
-            except Exception:
-                try:
-                    s.close()
-                except Exception:
-                    pass
-                server.clients.discard(s)
+        snapshot = list(server.clients)
+
+    dead = []
+    for s in snapshot:
+        if sender is not None and s is sender:
+            continue
+        try:
+            s.conn.sendall(msg.encode())
+        except Exception:
+            s.close()
+            dead.append(s)
+
+    if dead:
+        with server.clients_lock:
+            for s in dead:
+                server.clients.discard(s)        
 
 
 def server_broadcast_loop(server) -> None:
