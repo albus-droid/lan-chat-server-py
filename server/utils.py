@@ -59,8 +59,8 @@ def server_broadcast_loop(server) -> None:
 def store_history(server, msg: str) -> None:
     server.history.append(msg)
 
-def send_history(server, conn: socket.socket) -> None:
+def send_history(server, session: ClientSession) -> None:
     if not server.history:
         return
     for msg in server.history:
-        send_to_conn(server, conn, msg)
+        send_to_conn(server, session, msg)
