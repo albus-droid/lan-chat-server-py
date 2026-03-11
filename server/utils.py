@@ -62,7 +62,7 @@ async def server_broadcast_loop(server) -> None:
     try:
         while True:
             text = await queue.get()
-            await broadcast_message(server, f"{colors.color('Server: ', colors.YELLOW)} {text}\n")
+            await broadcast_message(server, f"{colors.color("Server:", colors.YELLOW)} {text}\n")
             store_history(server, f"Server: {text}\n")
     finally:
         loop.remove_reader(sys.stdin.fileno())
